@@ -11,11 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.1",
+    "basic-ftp": "^4.6.6",
     "csv-stringify": "^6.0.5",
     "json2csv": "^5.0.6",
     "moment": "^2.29.1",
     "mysql2": "^2.3.3",
     "nodemailer": "^6.7.2",
-    "ping": "^0.4.1"
+    "ping": "^0.4.1",
+    "qs": "^6.10.3"
   }
 }

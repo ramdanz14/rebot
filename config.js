@@ -7,6 +7,49 @@ var constringDBEDP = {
   multipleStatements: true,
 };
 
+
+
+async function getConBulanan(cab) {
+  let conDBEdp = await mysql.createConnection(constringDBEDP);
+
+  const [rows, fields] = await conDBEdp.execute(
+    `select * from config_cabang where rkey in('constringbulanan') and kode_cab='${cab}'`
+  );
+  let constring = rows[0].nilai.split(";");
+  let config = {};
+  for (const obj of constring) {
+    let cek = obj.trim().split("=");
+    switch (cek[0]) {
+      case "server":
+        config["host"] = cek[1];
+        break;
+
+      case "uid":
+        config["user"] = cek[1];
+        break;
+
+      case "pwd":
+        config["password"] = cek[1];
+        break;
+
+      case "database":
+        config["database"] = cek[1];
+        break;
+    }
+  }
+
+  var constrinBln = {
+    host: config.host,
+    user: config.user,
+    password: config.password,
+    database: config.database,
+    multipleStatements: true,
+    dateStrings: ["DATE", "DATETIME"],
+  };
+  conDBEdp.destroy();
+  return Promise.resolve(constrinBln);
+}
+
 async function getConWRC(cab) {
   let conDBEdp = await mysql.createConnection(constringDBEDP);
 
@@ -31,6 +74,7 @@ async function getConWRC(cab) {
     multipleStatements: true,
     dateStrings: ["DATE", "DATETIME"],
   };
+  conDBEdp.destroy();
   return Promise.resolve(constrinWRC);
 }
 
@@ -53,6 +97,7 @@ async function getConPOSRT(cab) {
     multipleStatements: true,
     dateStrings: ["DATE", "DATETIME"],
   };
+  conDBEdp.destroy();
   return Promise.resolve(constrinWRC);
 }
 
@@ -64,9 +109,9 @@ async function getConToko(iphost) {
     database: "pos",
     multipleStatements: true,
     dateStrings: ["DATE", "DATETIME"],
-connectTimeout: 30000,
+    connectTimeout: 30000,
   };
   return Promise.resolve(constringToko);
 }
 
-export { constringDBEDP, getConWRC, getConPOSRT, getConToko };
+export { constringDBEDP, getConWRC, getConPOSRT, getConToko, getConBulanan };

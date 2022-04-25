@@ -38,11 +38,9 @@ if (listCabang) {
         //   const concab = await getConWRC(kode_cab);
         //   console.log(concab);
         const conWRC = await mysql.createConnection(await getConWRC(kode_cab));
-        const query = `select kodedc,Toko,docno,tgl_docno,NamaFile from poscabang.brd_npb_all where tgl_docno='${moment(
+        const query = `select kodedc,Toko,docno,tgl_docno,NamaFile from poscabang.brd_npb_sum where tgl_docno='${moment(
           d
-        ).format(
-          "YYYY-MM-DD"
-        )}' and  namafile like '${jenis}%' group by namafile;`;
+        ).format("YYYY-MM-DD")}' and  namafile like '${jenis}%' ;`;
         //console.info(query);
         let [rows, fields] = await conWRC.execute(query);
         const jsonBRD = JSON.parse(JSON.stringify(rows));

@@ -47,9 +47,11 @@ if (listCabang) {
     listCabang.map(async (cab) => {
       let kode_cab = cab.kode_cab;
       const conWRC = await mysql.createConnection(await getConWRC(kode_cab));
-//      const query = `select * from (select kode_toko,sum(saldo_akh) as saldo_akh from kodetoko_2201 group by kode_toko) t left join 
-//    (SELECT kode_toko,SUM(begbal) begbal FROM st_220203 GROUP BY kode_toko) s using(kode_toko) having begbal!=saldo_akh;`;
-	const query = `SHOW VARIABLES LIKE 'innodb_buffer_pool_size' ;`;
+      //      const query = `select * from (select kode_toko,sum(saldo_akh) as saldo_akh from kodetoko_2201 group by kode_toko) t left join
+      //    (SELECT kode_toko,SUM(begbal) begbal FROM st_220203 GROUP BY kode_toko) s using(kode_toko) having begbal!=saldo_akh;`;
+      //	const query = `SHOW VARIABLES LIKE 'innodb_buffer_pool_size' ;`;
+      const query = fs.readFileSync("./selectQuery.txt").toString();
+      // const query = "SHOW VARIABLES LIKE 'version'";
 
       let [rows] = await conWRC.execute(query);
       let header_cab = { cabang: kode_cab };
@@ -61,12 +63,13 @@ if (listCabang) {
 
       hasilFinal.push(...mergedArray);
       console.log(kode_cab + "Finish");
+      conWRC.destroy();
     })
   ).catch((err) => {
     console.error(err.message); // Oops!
   });
 
-  var namaFile = `./tmp/HASILWRC-${moment(new Date()).format(
+  var namaFile = `./hasilwrc/HASILWRC-${moment(new Date()).format(
     "YYYYMMDDhhmmss"
   )}.csv`;
 
