@@ -9,8 +9,8 @@ import moment from "moment";
 
 let conDBEdp = await mysql.createConnection(constringDBEDP);
 
-var tgl_akhir = moment().add(-1, "days");
-var tgl_awal = moment().add(-1, "days").startOf("month");
+var tgl_akhir = moment().add(-2, "days");
+var tgl_awal = moment().add(-2, "days").startOf("month");
 
 for (let i = tgl_awal.format("D"); i <= tgl_akhir.format("D"); i++) {
   let tgl = moment().date(i);
@@ -29,9 +29,7 @@ const BOM = "\ufeff"; // Microsoft Excel needs this
 outputStream.write(BOM);
 
 let query = "";
-var tgl_akhir = moment().add(-2, "days");
-var tgl_awal = moment().add(-2, "days").startOf("month");
-console.log(tgl_akhir.format("D"));
+
 query += "SELECT kodegudang,kodetoko,namatoko,tipe_koneksi_primary,amgr,aspv";
 for (let i = tgl_awal.format("D"); i <= tgl_akhir.format("D"); i++) {
   query += `,hr${i}.cek as TGL${i}`;
@@ -90,6 +88,7 @@ try {
 }
 
 await finishedWriting;
+conDBEdp.end();
 
 console.log(
   `Finish  processing ${recordsProcessed} records oufile written in file ${namaFile}`

@@ -10,23 +10,44 @@ import moment from "moment";
 let conDBEdp = await mysqlpromise.createConnection(constringDBEDP);
 let listCabang = [];
 
-// query database
-try {
-  const [rows, fields] = await conDBEdp.execute(
-    "SELECT * FROM `DCMAST` where kode_cab in('G117')  "
-    // "SELECT * FROM `DCMAST` "
-  );
-  listCabang = rows;
-  conDBEdp.destroy();
-} catch (error) {
-  console.warn(
-    moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
-  );
-}
-conDBEdp.destroy();
+var fileQuery = "";
+const args = process.argv.slice(2);
+if (args.length <= 0) {
+  try {
+    const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST`");
+    listCabang = rows;
+  } catch (error) {
+    console.warn(
+      moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+    );
+  }
+  fileQuery = "./query/selectQuery.txt";
+} else {
+  if (args[0] == "ALL") {
+    try {
+      const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST`");
+      listCabang = rows;
+      conDBEdp.destroy();
+    } catch (error) {
+      console.warn(
+        moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+      );
+    }
+  } else {
+    let cabangs = args[0].split(",");
+    cabangs.forEach((cab) => {
+      listCabang.push({ kode_cab: cab, nama_cab: "" });
+    });
+  }
 
-if (listCabang) {
-  const AllQuery = fs.readFileSync("./selectQuery.txt").toString().split(";");
+  if (fs.existsSync("./query/" + args[1])) {
+    fileQuery = "./query/" + args[1];
+  }
+}
+// query database
+
+if (listCabang && fs.existsSync(fileQuery)) {
+  const AllQuery = fs.readFileSync(fileQuery).toString().split(";");
 
   for (const query of AllQuery) {
     let position = query.search(":");

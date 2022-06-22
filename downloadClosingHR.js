@@ -9,8 +9,8 @@ import moment from "moment";
 
 let conDBEdp = await mysql.createConnection(constringDBEDP);
 
-var tgl_akhir = moment().add(-1, "days");
-var tgl_awal = moment().add(-1, "days").startOf("month");
+var tgl_akhir = moment().add(-40, "days");
+var tgl_awal = moment().add(-40, "days").startOf("month");
 // var tgl_akhir = moment("2022-03-31", "YYYY-MM-DD");
 // var tgl_awal = moment("2022-03-01", "YYYY-MM-DD");
 

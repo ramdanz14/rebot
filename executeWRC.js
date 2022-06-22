@@ -9,18 +9,56 @@ let conDBEdp = await mysql.createConnection(constringDBEDP);
 let listCabang = [];
 
 // query database
-try {
-  const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST` ");
-  listCabang = rows;
-} catch (error) {
-  console.warn(
-    moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
-  );
+// try {
+//   const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST` ");
+//   listCabang = rows;
+// } catch (error) {
+//   console.warn(
+//     moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+//   );
+// }
+// conDBEdp.destroy();
+
+var fileQuery = "";
+const args = process.argv.slice(2);
+if (args.length <= 0) {
+  try {
+    const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST`");
+    listCabang = rows;
+  } catch (error) {
+    console.warn(
+      moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+    );
+  }
+} else {
+  if (args[0] == "ALL") {
+    try {
+      const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST`");
+      listCabang = rows;
+      conDBEdp.destroy();
+    } catch (error) {
+      console.warn(
+        moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+      );
+    }
+    fileQuery = "./query/isiQuery.txt";
+    
+
+  } else {
+    let cabangs = args[0].split(",");
+    cabangs.forEach((cab) => {
+      listCabang.push({ kode_cab: cab, nama_cab: "" });
+    });
+  }
+  if (fs.existsSync("./query/" + args[1])) {
+    fileQuery = "./query/" +args[1];
+  }
+
+  
 }
-conDBEdp.destroy();
 var fileLog = "./logerrrorwrc.txt";
 
-if (listCabang) {
+if (listCabang && fs.existsSync(fileQuery)) {
   //USING PARAREL ASYNC
   let total = listCabang.length;
   var reportProses = [];
@@ -29,7 +67,7 @@ if (listCabang) {
     listCabang.map(async (cab) => {
       let kode_cab = cab.kode_cab;
       const conWRC = await mysql.createConnection(await getConWRC(kode_cab));
-      const query = fs.readFileSync("./isiquery.txt").toString();
+      const query = fs.readFileSync(fileQuery).toString();
       // const query =
       //   "UPDATE REKSSN_220401 a,FILEJENIS b SET  a.JENIS=b.`JENIS`,a.SINGKATAN=b.`SINGKATAN`,a.JENIS2=b.`JENIS2`,a.UMUR=b.`UMUR` where a.PRDCD=b.PRDCD; ";
       const listQuery = query.split(";");

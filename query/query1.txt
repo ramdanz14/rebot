@@ -1,0 +1,161 @@
+
+-- 1aReport Over Per Toko :
+SELECT a.kode_toko,namatoko,b.Item_Aktif,SUM(IF(qty_over2>0,1,0)) Tot_Item,SUM(IF(stock_qty>(pkm+pkmsewa),pkm+Pkmsewa,0)) PKM,
+SUM(IF(stock_qty>(pkm+pkmsewa),(pkm+Pkmsewa)*acost,0)) RpPKM,
+SUM(IF(stock_qty>(pkm+pkmsewa),Stock_qty,0)) StockQty,
+SUM(IF(stock_qty>(pkm+pkmsewa),(Stock_qty*acost),0)) StockRp,
+SUM(IF(stock_qty>(pkm+pkmsewa),qty_over2,0)) Qty_OverTotal,
+SUM(IF(stock_qty>(pkm+pkmsewa),qty_over2*acost,0)) Rp_OverTotal,
+SUM(IF(stock_qty>(pkm+pkmsewa),over_crt2,0)) Ctn_Over,
+SUM(IF(stock_qty>(pkm+pkmsewa),(over_crt2*frac)*acost,0)) Rp_Ctn_Over,
+SUM(IF(stock_qty>(pkm+pkmsewa),`Qty_(Total-Crt)`,0)) `Qty_(Total-Crt)`,
+SUM(IF(stock_qty>(pkm+pkmsewa),`Qty_(Total-Crt)`*acost,0)) `Rp_(Total-Crt)`,
+
+SUM(IF((qty_over2>0),1,0)) Tk_Over_All,
+SUM(IF((qty_over2>0),(qty_over2),0)) Qty_Over_All,
+SUM(IF((qty_over2>0),(qty_over2)*acost,0)) Rp_Over_All,
+
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_SLW,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_U03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_A03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_0,
+
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_NonKapd,
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_NonKapd,
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_NonKapd,
+
+
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_All,
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_All,
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_All,
+
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_SLW,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_U03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_A03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_0
+
+FROM cek_over4f a,(SELECT kode_toko,COUNT(PRDCD) Item_Aktif FROM st_220531 GROUP BY kode_toko) b WHERE a.`Kode_Toko`=b.kode_toko AND  periode='JUL' AND CTGR='XX' GROUP BY a.kode_toko HAVING Qty_OverTotal<>0  ;
+
+
+-- 1bReport Over Per Item :
+SELECT Cat_cod, A.Prdcd, Singkatan, Ptag,
+SUM(IF(Stock_Qty>(pkm+PkmSewa),pkm+PkmSewa,0)) Pkm, SUM(IF(Stock_Qty>(pkm+PkmSewa),(pkm+PkmSewa)*acost,0)) PkmRp, 
+SUM(IF(Stock_Qty>(pkm+PkmSewa),Stock_Qty,0)) StockQty, SUM(IF(Stock_Qty>(pkm+PkmSewa),stock_qty*acost,0)) StockRp,
+SUM(IF(Stock_Qty>(pkm+PkmSewa),qty_over2,0)) Qty_OverTotal, SUM(IF(Stock_Qty>(pkm+PkmSewa),qty_over2*acost,0)) Rp_OverTotal,
+SUM(over_crt2) OverCrt2,SUM((over_crt2*frac)*acost) Over_crtRp2,
+SUM(`Qty_(Total-Crt)`) `Qty_(Total-Crt)`,SUM(`Qty_(Total-Crt)`*acost) `Rp_(Total-Crt)`, b.JmlTokoMain,SUM(IF(qty_over2>0,1,0)) JmlTokoOver,
+b.JmlTokoSto,b.JmlTokoUnderMindisp,
+
+SUM(IF((qty_over2>0),1,0)) Tk_Over_All,
+SUM(IF((qty_over2>0),(qty_over2),0)) Qty_Over_All,
+SUM(IF((qty_over2>0),(qty_over2)*acost,0)) Rp_Over_All,
+
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_SLW,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_U03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_A03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(Stock_Qty>Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_0,
+
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),1,0)) Tk_Over_NonKapd,
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),(qty_over2),0)) Qty_Over_NonKapd,
+SUM(IF((Stock_Qty<=Kap_Disp)and(qty_over2>0),(qty_over2)*acost,0)) Rp_Over_NonKapd,
+
+
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_All,
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_All,
+SUM(IF((qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_All,
+
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_SLW,
+SUM(IF((Flag_prod like '%SLW%')and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_SLW,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_U03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd between 0.000001 and 0.300000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_U03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_A03,
+SUM(IF((Flag_prod not like '%SLW%')and(spd>0.3)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_A03,
+
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),1,0)) Tk_Over_kapDisp_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp),0)) Qty_Over_kapDisp_0,
+SUM(IF((Flag_prod not like '%SLW%')and(spd=0.000000)and(qty_over2>0)and(Stock_Qty>Kap_Disp),(Stock_Qty-Kap_Disp)*acost,0)) Rp_Over_kapDisp_0
+
+FROM  cek_over4f a,(SELECT kode_toko,prdcd,COUNT(*) JmlTokoMain,SUM(IF(QTY<=0,1,0)) JmlTokoSto,
+SUM(IF(QTY<min_disp AND qty<>0,1,0)) JmlTokoUnderMindisp FROM st_220531 GROUP BY PRDCD) b
+WHERE a.`Prdcd`=b.prdcd AND periode='JUL' AND CTGR='XX' GROUP BY A.prdcd HAVING Qty_OverTotal<>0  LIMIT 1000000;
+
+
+-- 1cReport Item Pareto All:
+SELECT Kode_toko, NamaToko, Cat_cod, Prdcd, Singkatan, Ptag, Pkm, PkmSewa, Hit_Fixed_Tb, Minortk,Acost, 
+Min_Disp, Kap_Disp, Spd, Stock_Qty, (Stock_Qty*Acost) StockRp,  
+qty_over2 Qty_OverTotal,(qty_over2*acost) Rp_OverTotal,
+Over_crt2,((frac*over_crt2)*acost) Rp_OverCrt2,
+`Qty_(Total-Crt)`,(`Qty_(Total-Crt)`*acost) `Rp_(Total-Crt)`   
+FROM cek_over4f WHERE periode='JUL' AND CTGR='XX' AND prdcd IN (SELECT prdcd FROM plupareto)
+HAVING qty_over2<>0 ORDER BY Prdcd, Kode_Toko  LIMIT 0,90000000;
+
+
+-- 1dReport Item Pareto Non Seasonal:
+SELECT Kode_toko, NamaToko, Cat_cod, Prdcd, Singkatan, Ptag, Pkm, PkmSewa, Hit_Fixed_Tb, Minortk,Acost, 
+Min_Disp, Kap_Disp, Spd, Stock_Qty, (Stock_Qty*Acost) StockRp,  
+qty_over2 Qty_OverTotal,(qty_over2*acost) Rp_OverTotal,
+Over_crt2,((frac*over_crt2)*acost) Rp_OverCrt2,
+`Qty_(Total-Crt)`,(`Qty_(Total-Crt)`*acost) `Rp_(Total-Crt)`   
+FROM cek_over4f WHERE periode='JUL' AND CTGR='XX' AND prdcd IN (SELECT prdcd FROM pluparetononSS)
+HAVING qty_over2<>0 ORDER BY Prdcd, Kode_Toko  LIMIT 0,90000000;
+
+
+-- 1eReport Item Pareto 3 toko terbesar :
+SELECT Kode_toko, NamaToko, Cat_cod, Prdcd, Singkatan, Ptag, Pkm, PkmSewa, Hit_Fixed_Tb, Minortk,Acost, 
+Min_Disp, Kap_Disp, Spd, Stock_Qty, (Stock_Qty*Acost) StockRp,  
+qty_over2 Qty_OverTotal,(qty_over2*acost) Rp_OverTotal,
+Over_crt2,((over_crt2*frac)*acost) Rp_OverCrt2,
+`Qty_(Total-Crt)`,(`Qty_(Total-Crt)`*acost) `Rp_(Total-Crt)`  
+FROM cek_over4f WHERE periode='JUL' AND CTGR='XX' AND kode_toko IN (SELECT kode_toko FROM tobar)
+HAVING qty_over2<>0 ORDER BY Prdcd, Kode_Toko LIMIT 0,90000000;
+
+
+-- 1fReport Stok Per Toko All Item :
+SELECT TOKO,NAMATOKO,COUNT(*) jmlitem,SUM(`MAX`+PKM_G) PKM,SUM((`MAX`+PKM_G)*A.ACOST) RP_PKM,SUM(BEGBAL) SLD_AWL,SUM(BEGBAL*A.ACOST) RP_SLD_AWL,SUM(QTY) QTY,SUM(QTY*A.ACOST) RUPIAH FROM st_220531 A,PR_220531 B,MSTR_TOKO_TODAY C 
+WHERE a.prdcd=b.prdcd AND a.kode_toko=B.`toko` AND a.kode_toko=c.kodetoko 
+AND IF(LENGTH(a.CAT_COD)=6,a.CAT_COD<040000,a.CAT_COD<40000) 
+AND a.cat_cod NOT IN(34202,14601,33005,32707,34201,34203,32906,34202,34201,34205,34203,014601,032906,033003,033004,033005,033006,034201,034202) 
+AND IF(LENGTH(a.CAT_COD)=6,(MID(a.cat_cod,3,2)),(MID(a.cat_cod,2,2))) not in (46,47,41,42,31,32,37) 
+AND a.prdcd NOT IN(10001010,10003333,10003334,10003453,10016508,10016509,10019534,10026483,10026484,10028572,10028574,10036631,10037807,20000458,20000459,20003340,20004249,20004250,20005608,20005609,20013615,20022185,20022186,20022721,20024665,20026291,20026293,20026725,20026991,20026992,20033275,20033468,20033588,20033592,20034124,20036146,20036147,20038378,20038379,20038946,20040833,20040893,20040894,20040895,20040896,20040897,20040898,20046503,20046504,20046901,20046902,20047392,20052236,20052283,20053382,20053889,20054071,20058883,20059500,20059803,20059943,20059944,20062506,20062507,20063698,20063699,20063700,20063701,20066636,20067408,20067409,20067410,20067411,20096628,20096629,20056350) AND  `singkatan` NOT LIKE 'elpiji%' GROUP BY TOKO;
+
+
+-- 1gReport Stok Per Plu All Item :
+SELECT CAT_COD,A.PRDCD,SINGKATAN,PTAG,JmlTokoMain,SPD,ACOST,PRICE,PKM,RP_PKM,BEGBAL,RP_BEGBAL,QTY,RUPIAH FROM STOKITEM A,(SELECT kode_toko,prdcd,COUNT(*) JmlTokoMain FROM st_220531 WHERE PRDCD>=10000016 AND PRDCD<>'' GROUP BY PRDCD) D WHERE A.PRDCD=D.PRDCD LIMIT 2000000;

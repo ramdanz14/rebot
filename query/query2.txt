@@ -1,0 +1,15 @@
+-- 2aREPORT MASTER:
+SELECT kode_toko,a.`NAMA`,a.`TGL_BUKA`,a.cat_cod,a.prdcd,b.singkatan,COALESCE(a.`tag`,'')`tag`,
+SUM(IF(prd='01',sales,0)) sales_01,SUM(IF(prd='01',rp_sales,0)) rp_sales_01,SUM(IF(prd='01',saldo_akh,0)) stok_01,SUM(IF(prd='01',rp_sld_akh,0)) rp_stok_01,SUM(IF(prd='01',pkm+pkm_g,0)) pkm_01,
+SUM(IF(prd='02',sales,0)) sales_02,SUM(IF(prd='02',rp_sales,0)) rp_sales_02,SUM(IF(prd='02',saldo_akh,0)) stok_02,SUM(IF(prd='02',rp_sld_akh,0)) rp_stok_02,SUM(IF(prd='02',pkm+pkm_g,0)) pkm_02,
+SUM(IF(prd='03',sales,0)) sales_03,SUM(IF(prd='03',rp_sales,0)) rp_sales_03,SUM(IF(prd='03',saldo_akh,0)) stok_03,SUM(IF(prd='03',rp_sld_akh,0)) rp_stok_03,SUM(IF(prd='03',minord,0)) minord_03,SUM(IF(prd='03',mindis,0)) mindis_03,SUM(IF(prd='03',pkm+pkm_g,0)) pkm_03,
+SUM(IF(prd='03' AND saldo_akh-(pkm+pkm_g)>0,saldo_akh-(pkm+pkm_g),0)) OverQty,SUM(IF(prd='03' AND saldo_akh-(pkm+pkm_g)>0,(rp_sld_akh/saldo_akh),0))*SUM(IF(prd='03' AND saldo_akh-(pkm+pkm_g)>0,saldo_akh-(pkm+pkm_g),0)) OverRp 
+FROM FIX a,prodmast_dc b WHERE a.prdcd=b.prdcd GROUP BY a.kode_toko,a.prdcd LIMIT 10000000;
+
+
+-- 2bper item all :
+SELECT cat_cod,prdcd,singkatan,COALESCE(tag,'')tag,COUNT(Kode_toko) TOKO_Main,SUM(saldo_awal),SUM(rp_sld_awl),SUM(trfin),SUM(rp_trfin),SUM(trfout),SUM(rp_trfout),SUM(retur),SUM(rp_retur),SUM(sales),SUM(rp_sales),SUM(adj),SUM(rp_adj),SUM(saldo_akh),SUM(Rp_sld_akh) FROM masterall WHERE ctgr='xx' GROUP BY Prdcd LIMIT 1000000;
+ 
+
+-- 2cper toko all :
+SELECT Kode_toko,namaToko,tglBuka, PLU_Main,saldo_awal,rp_sld_awl,trfin,rp_trfin,trfout,rp_trfout,retur,rp_retur,sales,rp_sales,adj,rp_adj,saldo_akh,Rp_sld_akh FROM PER_TOKO LIMIT 1000000;

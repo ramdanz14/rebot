@@ -109,7 +109,7 @@ async function getConToko(iphost) {
     database: "pos",
     multipleStatements: true,
     dateStrings: ["DATE", "DATETIME"],
-    connectTimeout: 30000,
+    connectTimeout: 30000,	
   };
   return Promise.resolve(constringToko);
 }

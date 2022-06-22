@@ -126,7 +126,8 @@ if (listCabang) {
     update tb_toko set namatoko=REPLACE(namatoko,'/000','');
     update tb_toko set namatoko=REPLACE(namatoko,'/','');
     UPDATE tb_toko set toko_aktif='Y' where tglbuka=curdate();
-    DELETE FROM tb_toko WHERE toko_aktif IS NULL;`;
+    DELETE FROM tb_toko WHERE toko_aktif IS NULL;
+UPDATE tb_toko SET toko_aktif='N' WHERE kodetoko NOT IN(SELECT kodetoko FROM toko);`;
     await conDBEdp.query({
       sql: queryinsert,
       infileStreamFactory: (path) => fs.createReadStream(path),

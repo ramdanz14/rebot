@@ -49,9 +49,13 @@ if (listCabang) {
       const conWRC = await mysql.createConnection(await getConWRC(kode_cab));
       //      const query = `select * from (select kode_toko,sum(saldo_akh) as saldo_akh from kodetoko_2201 group by kode_toko) t left join
       //    (SELECT kode_toko,SUM(begbal) begbal FROM st_220203 GROUP BY kode_toko) s using(kode_toko) having begbal!=saldo_akh;`;
-      //	const query = `SHOW VARIABLES LIKE 'innodb_buffer_pool_size' ;`;
-      const query = fs.readFileSync("./selectQuery.txt").toString();
+      	//const query = `SELECT*  FROM kodetoko_2205 WHERE LENGTH(prdcd)!=8`;
+//const query =`SELECT * FROM tracelog_web WHERE LOG LIKE '%Finish Proses Bulanan%' UNION ALL
+//SELECT * FROM tracelog_web WHERE LOG LIKE '%Proses Cetak : Mulai%' UNION ALL
+//SELECT * FROM tracelog_web WHERE LOG LIKE '%Proses Cetak : Selesai%'`
+      
       // const query = "SHOW VARIABLES LIKE 'version'";
+const query = fs.readFileSync("./selectQuery.txt").toString();
 
       let [rows] = await conWRC.execute(query);
       let header_cab = { cabang: kode_cab };

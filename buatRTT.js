@@ -7,6 +7,7 @@ import moment from "moment";
 import { stringify } from "csv-stringify";
 import ftp from "basic-ftp";
 import path from "path";
+import nodemailer from "nodemailer";
 console.time("start");
 
 let conDBEdp = await mysql.createConnection(constringDBEDP);
@@ -25,11 +26,47 @@ if (args.length <= 1) {
     );
   }
 } else {
-  listCabang.push({ kode_cab: args[0], nama_cab: "" });
+  if (args[0] == "ALL") {
+    try {
+      const [rows, fields] = await conDBEdp.execute("SELECT * FROM `DCMAST`");
+      listCabang = rows;
+    } catch (error) {
+      console.warn(
+        moment(new Date()).format("YYYY-MM-DD hh:mm:ss") + " - ADA " + error
+      );
+    }
+  } else {
+    listCabang.push({ kode_cab: args[0], nama_cab: "" });
+  }
+
   var d = moment(args[1], "YYYY-MM-DD");
 }
 
-conDBEdp.destroy();
+async function kirimEmail(mailOptions) {
+  return new Promise((resolve, reject) => {
+    var transporter = nodemailer.createTransport({
+      host: "192.168.133.201",
+      port: 587,
+      secure: false, // upgrade later with STARTTLS
+      auth: {
+        user: "edp_reg_spv_1",
+        pass: "edpregbgr",
+      },
+      tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
+      },
+    });
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(" Email sent: " + info.response);
+      }
+    });
+  });
+}
+
 var TotalProses = [];
 
 await Promise.all(
@@ -167,7 +204,7 @@ await Promise.all(
         var cekIPftp = await conDBEdp.query(
           `select nilai from config_cabang where kode_cab='${cabang}' and rkey='ftpiptampung'`
         );
-        await conDBEdp.destroy();
+
         const client = new ftp.Client();
         //client.ftp.verbose = true;
         try {
@@ -202,6 +239,52 @@ await Promise.all(
           nama_cab: cab.nama_cab,
           totalRTT: listToko.length,
         });
+
+        const [rows, fields] = await conDBEdp.query(
+          `SELECT * FROM notif_email WHERE rkey='RTT' AND kode_cab='${cabang}'`
+        );
+
+        let mailOptions = {
+          from: {
+            name: "RAMDAN P |EDP REG1",
+            address: "edp_reg_spv_1@regbgr.indomaret.co.id",
+          },
+          to: rows[0].list_email + ",cs_edp@regbgr.indomaret.co.id",
+
+          subject: `${cabang} INFORMASI DATA RTT PERIODE  ${moment(d).format(
+            "DD MMM YYYY"
+          )}`,
+
+          html: `<p>Yth Tim DC/EDP/IC Cabang</p>
+              <p>di tempat,</p>
+              </br>
+              </br>                
+              <p>Berikut informasi terkait TAT Beda Pemilik pada tanggal ${moment(
+                d
+              ).format("DD MMM YYYY")}  sebanyak *${
+            listToko.length
+          } toko*, data bisa diakses pada alamat FTP berikut :</br>
+                  ftp://${cekIPftp[0][0].nilai}/${moment(d).format("DD")}</br>
+                  user : rtt</br>
+                  password : rtt</br>
+      
+                  </br>Dan untuk pengiriman data RTT yang sudah diproses oleh DC menjadi NPP,dikirimkan ke alamat :</br>
+                  ftp://192.168.133.3</br>
+                  user : rtt_reg1</br>
+                  pass : rtt_reg1</br>
+                  folder : ${cabang}</br>
+      </p>
+              <p>Atas perhatian dan kerjasamanya kami sampaikan terima kasih.</p></br>
+              </br>
+              <p>Hormat Kami,</p>
+              </br>                
+              <i><b>RAMDAN PERMADI</b></i></br>
+              <i>EDP REGIONAL 1</i></br>`,
+        };
+
+        let hasilEmail = await kirimEmail(mailOptions);
+        console.log(hasilEmail);
+
         let pesan = `_*Bapak EDPM Cabang ${cabang} - ${cab.nama_cab}*_,
 
         Berikut informasi terkait TAT Beda Pemilik pada tanggal ${moment(
@@ -221,15 +304,15 @@ await Promise.all(
 
         Mohon informasi ini bisa diteruskan ke IC dan DC Cabang.
           Terima kasih🙏`;
-        console.log("Start Sending notif WA");
-        await axios
-          .post("http://192.168.133.60:9000/send-message", {
-            number: "08562225929",
-            message: pesan,
-          })
-          .then(function (response) {
-            console.log("RESPON KIRIM WA : " + response.statusText);
-          });
+        // console.log("Start Sending notif WA");
+        // await axios
+        //   .post("http://192.168.133.60:9000/send-message", {
+        //     number: "08562225929",
+        //     message: pesan,
+        //   })
+        //   .then(function (response) {
+        //     console.log("RESPON KIRIM WA : " + response.statusText);
+        //   });
       }
       conWRC.destroy();
 
@@ -237,6 +320,7 @@ await Promise.all(
     }
   })
 );
+conDBEdp.destroy();
 console.log("FINISHALL");
 
 if (TotalProses.length > 0) {
@@ -248,15 +332,15 @@ if (TotalProses.length > 0) {
     pesan += `${p.kode_cab} - ${p.nama_cab} = ${p.totalRTT} Files\r\n`;
   }
   pesan += "\r\nTerima kasih.";
-  console.log("Start Sending notif WA");
-  await axios
-    .post("http://192.168.133.60:9000/send-message", {
-      number: "08562225929",
-      message: pesan,
-    })
-    .then(function (response) {
-      console.log("RESPON KIRIM WA : " + response.statusText);
-    });
+  // console.log("Start Sending notif WA");
+  // await axios
+  //   .post("http://192.168.133.60:9000/send-message", {
+  //     number: "08562225929",
+  //     message: pesan,
+  //   })
+  //   .then(function (response) {
+  //     console.log("RESPON KIRIM WA : " + response.statusText);
+  //   });
 }
 
 process.exit();

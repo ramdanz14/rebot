@@ -1,0 +1,3 @@
+update wt_220613 set toko='SEUF' WHERE toko='SIQR';
+update wt_220614 set toko='SEUF' WHERE toko='SIQR';
+update wt_220615 set toko='SEUF' WHERE toko='SIQR';
